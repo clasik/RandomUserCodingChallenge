@@ -1,34 +1,18 @@
 import Combine
 import Foundation
 
-class RandomUserService {
-    private let httpService: BaseService
-    private var currentPage: Int
+struct RandomUserService {
+    private let httpService: HttpBaseService
     
-    init(httpService: HttpService = HttpService()) {
+    init(httpService: HttpBaseService = HttpService()) {
         self.httpService = httpService
-        currentPage = 0
     }
     
-    func getMoreRandomUsers() -> AnyPublisher<[RandomUser], Error> {
-        let url = UrlConstant.randomUsersUrl(page: currentPage, results: 10)
-        currentPage += 1
-        return httpService
-            .get(url: url)
+    func getMoreRandomUsers(page: Int) -> AnyPublisher<[RandomUserAPIUser], Error> {
+        httpService
+            .get(url: UrlConstant.randomUsersUrl(page: page, results: 10))
             .decode(type: RandomUserResponse.self, decoder: JSONDecoder())
-            .map { response in
-                response.results.map { apiUser in
-                    RandomUser(
-                        gender: apiUser.gender,
-                        name: "\(apiUser.name?.first ?? "") \(apiUser.name?.last ?? "")",
-                        email: apiUser.email,
-                        location: "\(apiUser.location?.street?.name ?? "") \(apiUser.location?.street?.number ?? 0) \(apiUser.location?.city ?? ""), \(apiUser.location?.state ?? "")",
-                        phone: apiUser.phone,
-                        registeredDate: apiUser.registered?.date,
-                        pictureURL: apiUser.picture?.large
-                    )
-                }
-            }
+            .map { $0.results }
             .eraseToAnyPublisher()
     }
 }

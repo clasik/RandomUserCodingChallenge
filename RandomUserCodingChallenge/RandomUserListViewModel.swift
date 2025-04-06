@@ -8,6 +8,7 @@ class RandomUserListViewModel: ObservableObject {
     private let randomUserService: RandomUserService
     private var cancellable = Set<AnyCancellable>()
     private var randomUsersStore: [RandomUser] = []
+    private var currentPage = 0
     
     @Published var randomUsers: [RandomUser] = []
     @Published var showIndicator = false
@@ -36,20 +37,31 @@ class RandomUserListViewModel: ObservableObject {
     
     func fetchMoreData() {
         showIndicator = true
-        randomUserService.getMoreRandomUsers()
+        randomUserService.getMoreRandomUsers(page: currentPage)
             .receive(on: RunLoop.main)
+            .map { result in
+                result.map { apiUser in
+                    RandomUser(
+                        gender: apiUser.gender,
+                        name: "\(apiUser.name?.first ?? "") \(apiUser.name?.last ?? "")",
+                        email: apiUser.email,
+                        location: "\(apiUser.location?.street?.name ?? "") \(apiUser.location?.street?.number ?? 0) \(apiUser.location?.city ?? ""), \(apiUser.location?.state ?? "")",
+                        phone: apiUser.phone,
+                        registeredDate: apiUser.registered?.date,
+                        pictureURL: apiUser.picture?.large
+                    )
+                }
+            }
             .sink { completion in
                 self.completionHandler(completion, message: "Random Users Loaded")
             } receiveValue: { fetchedUsers in
                 let newUsers = fetchedUsers.filter { !self.randomUsersStore.contains($0) }
-                for user in newUsers {
-                    self.modelContext.insert(user)
-                }
-                try? self.modelContext.save()
+                self.swiftDataService.insertRandomUsers(newUsers)
                 self.randomUsersStore.append(contentsOf: newUsers)
                 self.randomUsers = self.randomUsersStore.filter { $0.isHidden == self.showHiddenUsers }
             }
             .store(in: &cancellable)
+        currentPage+=1
     }
     
     func delete(at offsets: IndexSet) {

@@ -1,11 +1,11 @@
 import Combine
 import Foundation
 
-protocol BaseService {
+protocol HttpBaseService {
     func get(url: URL) -> AnyPublisher<Data, URLError>
 }
 
-class HttpService: BaseService {
+struct HttpService: HttpBaseService {
     private let urlSession: URLSession
     
     init(urlSession: URLSession = .shared) {
