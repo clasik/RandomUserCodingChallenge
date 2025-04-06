@@ -5,14 +5,14 @@ import Foundation
 
 struct SwiftDataServiceMock: SwiftDataBaseService {
     
-    private let randonUserMockList: [RandomUser]
+    private let randomUserMockList: [RandomUser]
     
-    init(randonUserMockList: [RandomUser] = []) {
-        self.randonUserMockList = randonUserMockList
+    init(randomUserMockList: [RandomUser] = []) {
+        self.randomUserMockList = randomUserMockList
     }
     
     func fetchRandomUser() -> [RandomUser] {
-        randonUserMockList
+        randomUserMockList
     }
     
     func insertRandomUsers(_ randomUsers: [RandomUser]) {}

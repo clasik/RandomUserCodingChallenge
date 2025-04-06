@@ -6,21 +6,18 @@ import Combine
 
 struct RandomUserListViewModelTests {
     
-    @MainActor
     @Test func testAppStartsEmpty() throws {
         let swiftDataService = SwiftDataServiceMock()
         let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
         #expect(sut.randomUsers.isEmpty, "The list is empty initially")
     }
     
-    @MainActor
     @Test func testFetchSwiftDataWorks() throws {
-        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let swiftDataService = SwiftDataServiceMock(randomUserMockList: RandomUserMock.randomUsers)
         let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
         
         #expect(sut.randomUsers.count == RandomUserMock.randomUsers.filter{ !$0.isHidden }.count, "The list fetched from SwiftData should have the same number of users that the mock")
     }
-    
     
     @MainActor
     @Test func testFetchMoreDataWorks() async throws {
@@ -44,9 +41,8 @@ struct RandomUserListViewModelTests {
         #expect(sut.randomUsers.count == RandomUserMock.apiRandomUsers.count, "The list fetched from RandomUserService should have the same number of users that the mock not the double")
     }
     
-    @MainActor
     @Test func testDeleteWorks() throws {
-        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let swiftDataService = SwiftDataServiceMock(randomUserMockList: RandomUserMock.randomUsers)
         let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
         let index = sut.randomUsers.firstIndex(of: RandomUserMock.randomUsers[2])
         sut.delete(at: IndexSet([index!]))
@@ -57,12 +53,12 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testFetchSearchResultsWorks() throws {
-        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let swiftDataService = SwiftDataServiceMock(randomUserMockList: RandomUserMock.randomUsers)
         let randomUserService = RandomUserService(httpService: HttpServiceMock())
         let sut = RandomUserListViewModel(swiftDataService: swiftDataService, randomUserService: randomUserService)
         sut.fetchSearchResults(for: RandomUserMock.randomUsers[2].name!)
         
-        #expect(!sut.randomUsers.isEmpty, "The list should have one user that the mock")
+        #expect(sut.randomUsers.count == 1, "The list should have one user that the mock")
     }
 }
 
