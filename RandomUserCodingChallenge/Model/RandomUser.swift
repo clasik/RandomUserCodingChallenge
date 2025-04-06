@@ -1,43 +1,37 @@
-//
-//  RandomUser.swift
-//  RandomUserCodingChallenge
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import Foundation
 import SwiftData
 
-struct RandomUserResponse: Codable {
-    struct APIUser: Codable {
-        struct Name: Codable {
-            let first: String?
-            let last: String?
-        }
-        struct Location: Codable {
-            struct Street: Codable {
-                let name: String?
-                let number: Int?
-            }
-            let street: Street?
-            let city: String?
-            let state: String?
-        }
-        struct Picture: Codable {
-            let large: String?
-        }
-        struct Registered: Codable {
-            let date: String?
-        }
-        let gender: String?
-        let name: Name?
-        let location: Location?
-        let email: String?
-        let phone: String?
-        let registered: Registered?
-        let picture: Picture?
+struct RandomUserAPIUser: Codable {
+    struct Name: Codable {
+        let first: String?
+        let last: String?
     }
-    let results: [APIUser]
+    struct Location: Codable {
+        struct Street: Codable {
+            let name: String?
+            let number: Int?
+        }
+        let street: Street?
+        let city: String?
+        let state: String?
+    }
+    struct Picture: Codable {
+        let large: String?
+    }
+    struct Registered: Codable {
+        let date: String?
+    }
+    let gender: String?
+    let name: Name?
+    let location: Location?
+    let email: String?
+    let phone: String?
+    let registered: Registered?
+    let picture: Picture?
+}
+
+struct RandomUserResponse: Codable {
+    let results: [RandomUserAPIUser]
 }
 
 @Model

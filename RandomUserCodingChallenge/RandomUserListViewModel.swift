@@ -1,68 +1,61 @@
-//
-//  RandomUserListViewModel.swift
-//  RandomUserCodingChallenge
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import Foundation
 import Combine
 import SwiftData
 
 class RandomUserListViewModel: ObservableObject {
     
-    private let modelContext: ModelContext
+    private let swiftDataService: SwiftDataBaseService
     private let randomUserService: RandomUserService
     private var cancellable = Set<AnyCancellable>()
     private var randomUsersStore: [RandomUser] = []
+    private var currentPage = 0
     
     @Published var randomUsers: [RandomUser] = []
     @Published var showIndicator = false
     @Published var showHiddenUsers = false
     
-    init(modelContext: ModelContext, randomUserService: RandomUserService = RandomUserService()) {
-        self.modelContext = modelContext
+    init(swiftDataService: SwiftDataBaseService, randomUserService: RandomUserService = RandomUserService()) {
+        self.swiftDataService = swiftDataService
         self.randomUserService = randomUserService
-        randomUsers = []
-        randomUsersStore = []
-        fetchSwiftData()
+        randomUsersStore = swiftDataService.fetchRandomUser()
+        randomUsers = randomUsersStore.filter { $0.isHidden == showHiddenUsers }
         if randomUsersStore.isEmpty {
             fetchMoreData()
         }
     }
     
-    private func fetchSwiftData() {
-        do {
-            let descriptor = FetchDescriptor<RandomUser>(sortBy: [SortDescriptor(\.addedDate)])
-            randomUsersStore = try modelContext.fetch(descriptor)
-            randomUsers = randomUsersStore.filter { $0.isHidden == showHiddenUsers }
-        } catch {
-            print("Fetch failed")
-        }
-    }
-    
     func fetchMoreData() {
         showIndicator = true
-        randomUserService.getMoreRandomUsers()
+        randomUserService.getMoreRandomUsers(page: currentPage)
             .receive(on: RunLoop.main)
+            .map { result in
+                result.map { apiUser in
+                    RandomUser(
+                        gender: apiUser.gender,
+                        name: "\(apiUser.name?.first ?? "") \(apiUser.name?.last ?? "")",
+                        email: apiUser.email,
+                        location: "\(apiUser.location?.street?.name ?? "") \(apiUser.location?.street?.number ?? 0) \(apiUser.location?.city ?? ""), \(apiUser.location?.state ?? "")",
+                        phone: apiUser.phone,
+                        registeredDate: apiUser.registered?.date,
+                        pictureURL: apiUser.picture?.large
+                    )
+                }
+            }
             .sink { completion in
                 self.completionHandler(completion, message: "Random Users Loaded")
             } receiveValue: { fetchedUsers in
                 let newUsers = fetchedUsers.filter { !self.randomUsersStore.contains($0) }
-                for user in newUsers {
-                    self.modelContext.insert(user)
-                }
-                try? self.modelContext.save()
+                self.swiftDataService.insertRandomUsers(newUsers)
                 self.randomUsersStore.append(contentsOf: newUsers)
                 self.randomUsers = self.randomUsersStore.filter { $0.isHidden == self.showHiddenUsers }
             }
             .store(in: &cancellable)
+        currentPage+=1
     }
     
     func delete(at offsets: IndexSet) {
         offsets.map { self.randomUsers[$0] }
-            .forEach { $0.isHidden = true }
-        try? modelContext.save()
+            .forEach { self.swiftDataService.hideUser($0) }
     }
     
     func fetchSearchResults(for query: String) {

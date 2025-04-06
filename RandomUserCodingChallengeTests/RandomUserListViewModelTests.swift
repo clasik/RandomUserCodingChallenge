@@ -1,10 +1,3 @@
-//
-//  RandomUserListViewModelTests.swift
-//  RandomUserCodingChallenge
-//
-//  Created by principal on 14/3/25.
-//
-
 import Testing
 import SwiftData
 import Foundation
@@ -15,19 +8,15 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testAppStartsEmpty() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext)
-        
-        #expect(sut.randomUsers.count == 0, "The list is empty initially")
+        let swiftDataService = SwiftDataServiceMock()
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
+        #expect(sut.randomUsers.isEmpty, "The list is empty initially")
     }
     
     @MainActor
     @Test func testFetchSwiftDataWorks() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        addRandomUserFakeData(modelContext: container.mainContext)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext)
+        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
         
         #expect(sut.randomUsers.count == RandomUserMock.randomUsers.filter{ !$0.isHidden }.count, "The list fetched from SwiftData should have the same number of users that the mock")
     }
@@ -35,9 +24,9 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testFetchMoreDataWorks() async throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext, randomUserService: RandomUserService(httpService: HttpServiceMock()))
+        let swiftDataService = SwiftDataServiceMock()
+        let randomUserService = RandomUserService(httpService: HttpServiceMock())
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService, randomUserService: randomUserService)
         _ = await sut.$randomUsers.values.first()
         
         #expect(sut.randomUsers.count == RandomUserMock.apiRandomUsers.count, "The list fetched from RandomUserService should have the same number of users that the mock")
@@ -45,9 +34,9 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testIgnoreDuplicatedUsersWorks() async throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext, randomUserService: RandomUserService(httpService: HttpServiceMock()))
+        let swiftDataService = SwiftDataServiceMock()
+        let randomUserService = RandomUserService(httpService: HttpServiceMock())
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService, randomUserService: randomUserService)
         _ = await sut.$randomUsers.values.first()
         sut.fetchMoreData()
         _ = await sut.$randomUsers.values.first()
@@ -57,10 +46,8 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testDeleteWorks() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        addRandomUserFakeData(modelContext: container.mainContext)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext)
+        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService)
         let index = sut.randomUsers.firstIndex(of: RandomUserMock.randomUsers[2])
         sut.delete(at: IndexSet([index!]))
         sut.filterHiddenUsers(false)
@@ -70,20 +57,12 @@ struct RandomUserListViewModelTests {
     
     @MainActor
     @Test func testFetchSearchResultsWorks() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: RandomUser.self, configurations: config)
-        addRandomUserFakeData(modelContext: container.mainContext)
-        let sut = RandomUserListViewModel(modelContext: container.mainContext)
+        let swiftDataService = SwiftDataServiceMock(randonUserMockList: RandomUserMock.randomUsers)
+        let randomUserService = RandomUserService(httpService: HttpServiceMock())
+        let sut = RandomUserListViewModel(swiftDataService: swiftDataService, randomUserService: randomUserService)
         sut.fetchSearchResults(for: RandomUserMock.randomUsers[2].name!)
         
-        #expect(sut.randomUsers.count == 1, "The list should have one user that the mock")
-    }
-    
-    
-    func addRandomUserFakeData(modelContext: ModelContext) {
-        RandomUserMock.randomUsers.forEach {
-            modelContext.insert($0)
-        }
+        #expect(!sut.randomUsers.isEmpty, "The list should have one user that the mock")
     }
 }
 

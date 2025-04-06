@@ -1,10 +1,3 @@
-//
-//  RandomUserMock.swift
-//  RandomUserCodingChallenge
-//
-//  Created by principal on 14/3/25.
-//
-
 import Foundation
 @testable import RandomUserCodingChallenge
 
@@ -12,8 +5,8 @@ struct RandomUserMock {
     
     static let apiRandomUsersResponse = [ "results" : apiRandomUsers ]
     
-    static let apiRandomUsers: [RandomUserResponse.APIUser] = [
-        RandomUserResponse.APIUser(
+    static let apiRandomUsers: [RandomUserAPIUser] = [
+        RandomUserAPIUser(
             gender: "Male",
             name: .init(first: "John", last: "Doe"),
             location: .init(street: .init(name: "Main St", number: 123), city: "New York", state: "NY"),
@@ -22,7 +15,7 @@ struct RandomUserMock {
             registered: .init(date: "2023-01-15"),
             picture: .init(large: "https://randomuser.me/api/portraits/men/1.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Female",
             name: .init(first: "Jane", last: "Smith"),
             location: .init(street: .init(name: "Sunset Blvd", number: 456), city: "Los Angeles", state: "CA"),
@@ -31,7 +24,7 @@ struct RandomUserMock {
             registered: .init(date: "2022-11-23"),
             picture: .init(large: "https://randomuser.me/api/portraits/women/2.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Male",
             name: .init(first: "Michael", last: "Brown"),
             location: .init(street: .init(name: "Lake Rd", number: 789), city: "Chicago", state: "IL"),
@@ -40,7 +33,7 @@ struct RandomUserMock {
             registered: .init(date: "2021-09-10"),
             picture: .init(large: "https://randomuser.me/api/portraits/men/3.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Female",
             name: .init(first: "Emily", last: "Johnson"),
             location: .init(street: .init(name: "Broadway", number: 321), city: "Houston", state: "TX"),
@@ -49,7 +42,7 @@ struct RandomUserMock {
             registered: .init(date: "2020-07-05"),
             picture: .init(large: "https://randomuser.me/api/portraits/women/4.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Male",
             name: .init(first: "David", last: "Wilson"),
             location: .init(street: .init(name: "Park Ave", number: 654), city: "Phoenix", state: "AZ"),
@@ -58,7 +51,7 @@ struct RandomUserMock {
             registered: .init(date: "2019-05-30"),
             picture: .init(large: "https://randomuser.me/api/portraits/men/5.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Female",
             name: .init(first: "Sophia", last: "Martinez"),
             location: .init(street: .init(name: "Elm St", number: 987), city: "Philadelphia", state: "PA"),
@@ -67,7 +60,7 @@ struct RandomUserMock {
             registered: .init(date: "2018-03-15"),
             picture: .init(large: "https://randomuser.me/api/portraits/women/6.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Male",
             name: .init(first: "James", last: "Anderson"),
             location: .init(street: .init(name: "Ocean Dr", number: 741), city: "San Antonio", state: "TX"),
@@ -76,7 +69,7 @@ struct RandomUserMock {
             registered: .init(date: "2017-01-20"),
             picture: .init(large: "https://randomuser.me/api/portraits/men/7.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Female",
             name: .init(first: "Olivia", last: "Thomas"),
             location: .init(street: .init(name: "Bay St", number: 852), city: "San Diego", state: "CA"),
@@ -85,7 +78,7 @@ struct RandomUserMock {
             registered: .init(date: "2016-12-12"),
             picture: .init(large: "https://randomuser.me/api/portraits/women/8.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Male",
             name: .init(first: "Daniel", last: "White"),
             location: .init(street: .init(name: "Hill Rd", number: 963), city: "Dallas", state: "TX"),
@@ -94,7 +87,7 @@ struct RandomUserMock {
             registered: .init(date: "2015-10-08"),
             picture: .init(large: "https://randomuser.me/api/portraits/men/9.jpg")
         ),
-        RandomUserResponse.APIUser(
+        RandomUserAPIUser(
             gender: "Female",
             name: .init(first: "Isabella", last: "Lee"),
             location: .init(street: .init(name: "Pine St", number: 159), city: "San Jose", state: "CA"),

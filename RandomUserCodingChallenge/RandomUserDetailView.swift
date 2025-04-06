@@ -1,35 +1,11 @@
-//
-//  RandomUserDetailView.swift
-//  RandomUserCodingChallenge
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import SwiftUI
 
 struct RandomUserDetailView: View {
-    
     let randomUser: RandomUser
     
     var body: some View {
         VStack {
-            if let pictureURLString = randomUser.pictureURL, let pictureURL = URL(string: pictureURLString) {
-                AsyncImage(url: pictureURL) { image in
-                    image.resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                } placeholder: {
-                    ProgressView()
-                        .frame(width: 100, height: 100)
-                }
-            } else {
-                Image(systemName: "person.circle").resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-            }
-            
+            RandomUserProfileImageView(pictureURLString: randomUser.pictureURL, size: 100)
             Text("Gender: \(randomUser.gender ?? "")")
             Text("Name: \(randomUser.name ?? "")")
             Text("Location: \(randomUser.location ?? "")")

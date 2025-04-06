@@ -1,34 +1,11 @@
-//
-//  RandomUserCellView.swift
-//  RandomUserCodingChallenge
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import SwiftUI
 
 struct RandomUserListCellView: View {
-    
     let randomUser: RandomUser
     
     var body: some View {
         HStack {
-            if let pictureURLString = randomUser.pictureURL, let pictureURL = URL(string: pictureURLString) {
-                AsyncImage(url: pictureURL) { image in
-                    image.resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .clipShape(Circle())
-                } placeholder: {
-                    ProgressView()
-                        .frame(width: 60, height: 60)
-                }
-            } else {
-                Image(systemName: "person.circle").resizable()
-                    .scaledToFit()
-                    .frame(width: 60, height: 60)
-                    .clipShape(Circle())
-            }
+            RandomUserProfileImageView(pictureURLString: randomUser.pictureURL, size: 60)
             VStack (alignment: .leading) {
                 Text(randomUser.name ?? "")
                 Text(randomUser.email ?? "")
