@@ -5,7 +5,7 @@ struct RandomUserProfileImageView: View {
     let size: CGFloat
     
     var body: some View {
-        if let pictureURLString = pictureURLString, let pictureURL = URL(string: pictureURLString) {
+        if let pictureURLString, let pictureURL = URL(string: pictureURLString) {
             AsyncImage(url: pictureURL) { image in
                 image.resizable()
                     .scaledToFit()
