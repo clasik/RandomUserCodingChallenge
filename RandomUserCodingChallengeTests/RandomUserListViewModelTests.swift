@@ -1,10 +1,3 @@
-//
-//  RandomUserListViewModelTests.swift
-//  RandomUserCodingChallenge
-//
-//  Created by principal on 14/3/25.
-//
-
 import Testing
 import SwiftData
 import Foundation

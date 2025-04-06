@@ -1,10 +1,3 @@
-//
-//  RandomUser.swift
-//  RandomUserCodingChallenge
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import Foundation
 import SwiftData
 

@@ -1,10 +1,3 @@
-//
-//  RandomUserCodingChallengeUITestsLaunchTests.swift
-//  RandomUserCodingChallengeUITests
-//
-//  Created by Pablo on 14/3/25.
-//
-
 import XCTest
 
 final class RandomUserCodingChallengeUITestsLaunchTests: XCTestCase {

@@ -1,10 +1,3 @@
-//
-//  RandomUserServiceMock.swift
-//  RandomUserCodingChallenge
-//
-//  Created by principal on 14/3/25.
-//
-
 import Combine
 import Foundation
 @testable import RandomUserCodingChallenge
