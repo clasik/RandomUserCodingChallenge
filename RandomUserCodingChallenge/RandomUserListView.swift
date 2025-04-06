@@ -3,12 +3,12 @@ import SwiftData
 
 struct RandomUserListView: View {
     
-    init(modelContext: ModelContext) {
-        randomUserListViewModel = RandomUserListViewModel(modelContext: modelContext)
-    }
-    
     @ObservedObject private var randomUserListViewModel: RandomUserListViewModel
-    @State private var searchQuery: String = ""
+    @State private var searchQuery = ""
+    
+    init(modelContext: ModelContext) {
+        randomUserListViewModel = RandomUserListViewModel(swiftDataService: SwiftDataService(modelContext: modelContext))
+    }
     
     private var indicatorView: some View {
         ProgressView()

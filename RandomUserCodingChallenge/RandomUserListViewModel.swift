@@ -4,7 +4,7 @@ import SwiftData
 
 class RandomUserListViewModel: ObservableObject {
     
-    private let modelContext: ModelContext
+    private let swiftDataService: SwiftDataBaseService
     private let randomUserService: RandomUserService
     private var cancellable = Set<AnyCancellable>()
     private var randomUsersStore: [RandomUser] = []
@@ -14,24 +14,13 @@ class RandomUserListViewModel: ObservableObject {
     @Published var showIndicator = false
     @Published var showHiddenUsers = false
     
-    init(modelContext: ModelContext, randomUserService: RandomUserService = RandomUserService()) {
-        self.modelContext = modelContext
+    init(swiftDataService: SwiftDataBaseService, randomUserService: RandomUserService = RandomUserService()) {
+        self.swiftDataService = swiftDataService
         self.randomUserService = randomUserService
-        randomUsers = []
-        randomUsersStore = []
-        fetchSwiftData()
+        randomUsersStore = swiftDataService.fetchRandomUser()
+        randomUsers = randomUsersStore.filter { $0.isHidden == showHiddenUsers }
         if randomUsersStore.isEmpty {
             fetchMoreData()
-        }
-    }
-    
-    private func fetchSwiftData() {
-        do {
-            let descriptor = FetchDescriptor<RandomUser>(sortBy: [SortDescriptor(\.addedDate)])
-            randomUsersStore = try modelContext.fetch(descriptor)
-            randomUsers = randomUsersStore.filter { $0.isHidden == showHiddenUsers }
-        } catch {
-            print("Fetch failed")
         }
     }
     
@@ -66,8 +55,7 @@ class RandomUserListViewModel: ObservableObject {
     
     func delete(at offsets: IndexSet) {
         offsets.map { self.randomUsers[$0] }
-            .forEach { $0.isHidden = true }
-        try? modelContext.save()
+            .forEach { self.swiftDataService.hideUser($0) }
     }
     
     func fetchSearchResults(for query: String) {
